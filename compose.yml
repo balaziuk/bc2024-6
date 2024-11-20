@@ -1,0 +1,9 @@
+services:
+  server:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+    command: npx node server.js -h 0.0.0.0 -p 8081 -c ./cache
+    ports:
+      - "8081:8081" 
