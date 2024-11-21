@@ -4,6 +4,11 @@ services:
       context: .
     environment:
       NODE_ENV: production
-    command: npx node server.js -h 0.0.0.0 -p 8081 -c ./cache
+    command: npx nodemon -L --inspect=0.0.0.0:9229 server.js -- -h 0.0.0.0 -p 8081 -c ./cache
+    volumes:
+      - .:/usr/src/app  
     ports:
-      - "8081:8081" 
+      - 8081:8081
+      - 9229:9229
+
+
