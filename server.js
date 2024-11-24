@@ -12,14 +12,19 @@ const swaggerJsdoc = require('swagger-jsdoc');
 // налаштування Swagger
 const options = {
   definition: {
-    openapi: '3.0.0',  
+    openapi: '3.0.0',
     info: {
-      title: 'Notes API',  
-      version: '1.0.0',  
-      description: 'API для роботи з нотатками',  
+      title: 'Note API',
+      version: '1.0.0',
+      description: 'API для роботи з нотатками',
     },
+    servers: [
+      {
+        url: 'http://localhost:8081/',
+      },
+    ],
   },
-  apis: ['./server.js'],  //  місце, де Swagger буде шукати коментарі
+  apis: ['./server.js'], 
 };
 
 const specs = swaggerJsdoc(options);
@@ -51,18 +56,21 @@ app.get('/', (req, res) => {
  * @swagger
  * /notes/{name}:
  *   get:
- *     summary: Отримати нотатку за ім'ям
- *     description: Повертає текст нотатки за її іменем
+ *     summary: Отримати вміст певної нотатки
  *     parameters:
  *       - in: path
  *         name: name
- *         required: true
- *         description: Ім'я нотатки
  *         schema:
  *           type: string
+ *         required: true
+ *         description: Назва нотатки
  *     responses:
  *       200:
- *         description: Успішно знайдено нотатку
+ *         description: Вміст нотатки
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
  *       404:
  *         description: Нотатку не знайдено
  */
@@ -79,24 +87,23 @@ app.get('/notes/:name', (req, res) => {
  * @swagger
  * /notes/{name}:
  *   put:
- *     summary: Оновити текст нотатки
- *     description: Оновлює текст нотатки за її іменем
+ *     summary: Оновити існуючу нотатку
  *     parameters:
  *       - in: path
  *         name: name
- *         required: true
- *         description: Ім'я нотатки для оновлення
  *         schema:
  *           type: string
- *       - in: body
- *         name: text
  *         required: true
- *         description: Новий текст нотатки
- *         schema:
- *           type: string
+ *         description: Назва нотатки
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         text/plain:
+ *           schema:
+ *             type: string
  *     responses:
  *       200:
- *         description: Нотатку успішно оновлено
+ *         description: Нотатку оновлено
  *       404:
  *         description: Нотатку не знайдено
  */
@@ -146,11 +153,10 @@ app.delete('/notes/:name', (req, res) => {
  * @swagger
  * /notes:
  *   get:
- *     summary: Отримати список всіх нотаток
- *     description: Повертає список всіх нотаток
+ *     summary: Отримати список усіх нотаток
  *     responses:
  *       200:
- *         description: Список нотаток успішно отримано
+ *         description: Список нотаток
  *         content:
  *           application/json:
  *             schema:
@@ -172,23 +178,22 @@ app.get('/notes', (req, res) => {
  * /write:
  *   post:
  *     summary: Створити нову нотатку
- *     description: Створює нову нотатку
- *     parameters:
- *       - in: formData
- *         name: note_name
- *         required: true
- *         schema:
- *           type: string
- *       - in: formData
- *         name: note
- *         required: true
- *         schema:
- *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               note_name:
+ *                 type: string
+ *               note:
+ *                 type: string
  *     responses:
  *       201:
- *         description: Нотатку успішно створено
+ *         description: Нотатку створено
  *       400:
- *         description: Не вистачає необхідних параметрів
+ *         description: Нотатка вже існує
  */
 app.post('/write', upload.none(), (req, res) => {
     const { note_name, note } = req.body;
