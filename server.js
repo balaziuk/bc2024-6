@@ -209,10 +209,25 @@ app.post('/write', upload.none(), (req, res) => {
 // Статичний файл для HTML форми
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Маршрут для відображення HTML форми
+/**
+ * @swagger
+ * /UploadForm.html:
+ *   get:
+ *     summary: Отримати HTML-форму
+ *     description: Повертає HTML-форму для завантаження нотаток
+ *     responses:
+ *       200:
+ *         description: Успішно повернуто HTML-форму
+ *         content:
+ *           text/html:
+ *             schema:
+ *               type: string
+ *               example: "<html><head><title>Upload Form</title></head><body>...</body></html>"
+ */
 app.get('/UploadForm.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'UploadForm.html'));
 });
+
 
 // Запуск сервера
 app.listen(port, host, () => {
